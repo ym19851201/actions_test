@@ -10,7 +10,7 @@ jobs:
       - name: Setup mermerd
         run: |
           url=$(curl -fsSL "https://api.github.com/repos/KarnerTh/mermerd/releases" | jq -r '[.[] | select(.prerelease | not) | .assets[] | select(.name | contains("linux_amd64")) | .browser_download_url][0]')
-          curl -fsSL "$url" | tar zxf - mermerd ./mermerd
+          curl -fsSL "$url" | tar zxf - mermerd
           chmod a+x ./mermerd
       - name: Run mermerd
         run: ./mermerd
