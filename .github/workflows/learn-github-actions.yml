@@ -21,4 +21,8 @@ jobs:
           git config --local user.name "GitHub Action"
           git add tmp.txt
           git commit -m "Add tmp.txt"
-          git push -u origin ${{ github.ref_name }}
+      - name: Push
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
