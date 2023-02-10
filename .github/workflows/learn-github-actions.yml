@@ -19,10 +19,9 @@ jobs:
           echo 'XXXXX' > ./tmp.txt
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git branch
           git add tmp.txt
           git commit -m "Add tmp.txt"
-      - name: Push
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+          git log
+          git status
+          git push
