@@ -37,6 +37,7 @@ jobs:
           git status
           git commit -m "Add tmp.txt"
           git push -u https://x-access-token:${GITHUB_TOKEN}@github.com/ym19851201/actions_test chore/update-er
+          git branch
           gh pr create \
             -B tmp/test-actions \
             -t 'update ER ${{ steps.check_pr.outputs.message }}' \
