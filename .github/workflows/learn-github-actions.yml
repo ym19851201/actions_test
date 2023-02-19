@@ -28,15 +28,17 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Commit
         run: |
+          gh --version
           echo 'XXXXX' > ./tmp.txt
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git switch -c chore/update-er
           git add tmp.txt
+          git status
           git commit -m "Add tmp.txt"
           git push -u https://x-access-token:${GITHUB_TOKEN}@github.com/ym19851201/actions_test chore/update-er
           gh pr create \
-            -B main \
+            -B tmp/test-actions \
             -t 'update ER ${{ steps.check_pr.outputs.message }}' \
             -b 'ER updated!' \
             -a ${{ github.actor }}
