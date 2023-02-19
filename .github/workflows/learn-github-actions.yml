@@ -7,21 +7,34 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      # - name: Setup mermerd
-      #   run: |
-      #     url=$(curl -fsSL "https://api.github.com/repos/KarnerTh/mermerd/releases" | jq -r '[.[] | select(.prerelease | not) | .assets[] | select(.name | contains("linux_amd64")) | .browser_download_url][0]')
-      #     curl -fsSL "$url" | tar zxf - mermerd
-      #     chmod a+x ./mermerd
-      # - name: Run mermerd
-      #   run: ./mermerd
+      - name: Setup gh
+        run: |
+          gh --version
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+          sudo apt-add-repository https://cli.github.com/packages
+          sudo apt update
+          sudo apt install gh
+          gh --version
+      - name: Setup mermerd
+        run: |
+      - name: Run mermerd
+        run: |
+          url=$(gh api /repos/KarnerTh/mermerd/releases -q '[.[] | select(.prerelease | not) | .assets[] | select(.name | contains("linux_amd64")) | .browser_download_url][0]')
+          curl -fsSL "$url" | tar -zxf - mermerd ./mermerd
+          chmod a+x ./mermerd
+          mermerd --version
       - name: Commit
         run: |
           echo 'XXXXX' > ./tmp.txt
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git branch
+          git switch -c chore/update-er
           git add tmp.txt
           git commit -m "Add tmp.txt"
-          git log
-          git status
           git push
+          gh pr create \
+            -B main \
+            -t 'update ER ${{ steps.check_pr.outputs.message }}' \
+            -a ${{ github.actor }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
