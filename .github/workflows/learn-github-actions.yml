@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is learning GitHub Actions
 on:
   pull_request:
     paths:
-      - 'db/schema.rb'
+      - 'db/tmp.txt'
 jobs:
   update-er:
     permissions:
