@@ -16,16 +16,21 @@ jobs:
       statuses: write
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Check if ER should be updated
+        run: |
+          echo "UPDATE=$(git diff main | grep 'db/schema.rb')" >> $GITHUB_ENV
       - name: Setup mermerd
+        if: $UPDATE
         run: |
           url=$(gh api /repos/KarnerTh/mermerd/releases -q '[.[] | select(.prerelease | not) | .assets[] | select(.name | contains("linux_amd64")) | .browser_download_url][0]')
           curl -fsSL "$url" | tar -zxf - mermerd
           chmod a+x ./mermerd
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Checkout
-        uses: actions/checkout@v3
       - name: Commit
+        if: $UPDATE
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
@@ -39,7 +44,7 @@ jobs:
           git commit -m "Add tmp.txt"
           git push -u https://x-access-token:${GITHUB_TOKEN}@github.com/ym19851201/actions_test 
           gh pr create \
-            -B tmp/test-actions \
+            -B ${{ github.ref_name }} \
             -t 'update ER ${{ steps.check_pr.outputs.message }}' \
             -b 'ER updated!' \
             -a ${{ github.actor }} \
