@@ -32,15 +32,11 @@ jobs:
           git fetch origin
           ER_BRANCH=chore/update-er-from-${{ github.ref_name }}
           git switch $ER_BRANCH 2>/dev/null || git switch -c $ER_BRANCH
-          git log
-          git pull origin ${{ github.ref_name }}
+          git pull --rebase origin ${{ github.ref_name }}
           echo 'XXXXX' >> ./tmp.txt
           git add tmp.txt
           git commit -m "Add tmp.txt"
           git push -u https://x-access-token:${GITHUB_TOKEN}@github.com/ym19851201/actions_test 
-          git branch
-          git status
-          git log --name-status
           gh pr create \
             -B tmp/test-actions \
             -t 'update ER ${{ steps.check_pr.outputs.message }}' \
