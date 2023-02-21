@@ -31,8 +31,9 @@ jobs:
           git config --local user.name "GitHub Action"
           git fetch origin
           ER_BRANCH=chore/update-er-from-${{ github.ref_name }}
-          git switch $ER_BRANCH 2>/dev/null || git switch -c $ER_BRANCH
-          git pull --rebase origin ${{ github.ref_name }}
+          # コンフリクトを解消できないのでremoteから削除
+          git branch -a | grep -q $ER_BRANCH && git push origin --delete $ER_BRANCH
+          git switch -c $ER_BRANCH
           echo 'XXXXX' >> ./tmp.txt
           git add tmp.txt
           git commit -m "Add tmp.txt"
