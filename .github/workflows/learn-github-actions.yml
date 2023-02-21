@@ -42,7 +42,7 @@ jobs:
           git commit -m "Add tmp.txt"
           git push -u https://x-access-token:${GITHUB_TOKEN}@github.com/ym19851201/actions_test 
           gh pr create \
-            -B ${{ github.ref_name }} \
+            -B ${{ github.head_ref }} \
             -t 'update ER ${{ steps.check_pr.outputs.message }}' \
             -b 'ER updated!' \
             -a ${{ github.actor }} \
