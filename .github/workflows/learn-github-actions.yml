@@ -30,7 +30,8 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git fetch origin
-          git switch chore/update-er-from-${{ github.ref_name }} 2>/dev/null || git switch -c chore/update-er-from-${{ github.ref_name }}
+          ER_BRANCH=chore/update-er-from-${{ github.ref_name }}
+          git switch $ER_BRANCH 2>/dev/null || git switch -c $ER_BRANCH
           git pull origin ${{ github.ref_name }}
           echo 'XXXXX' >> ./tmp.txt
           git add tmp.txt
@@ -44,6 +45,6 @@ jobs:
             -t 'update ER ${{ steps.check_pr.outputs.message }}' \
             -b 'ER updated!' \
             -a ${{ github.actor }} \
-            -H chore/update-er-from-${{ github.ref_name }}
+            -H $ER_BRANCH
         env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
