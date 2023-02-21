@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is learning GitHub Actions
 on:
   pull_request:
     paths:
-      - 'tmp.txt'
+      - 'db/schema.rb'
 jobs:
   update-er:
     permissions:
@@ -28,11 +28,13 @@ jobs:
           chmod a+x ./mermerd
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Commit
+      - name: Setup git
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git fetch origin
+      - name: Commit & Push
+        run: |
           ER_BRANCH=chore/update-er-from-${{ github.head_ref }}
           # コンフリクトを解消できないのでremoteから削除
           git branch -a | grep -q $ER_BRANCH && git push origin --delete $ER_BRANCH
@@ -41,9 +43,13 @@ jobs:
           git add tmp.txt
           git commit -m "Add tmp.txt"
           git push -u https://x-access-token:${GITHUB_TOKEN}@github.com/ym19851201/actions_test 
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create PR
+        run: |
           gh pr create \
             -B ${{ github.head_ref }} \
-            -t 'update ER ${{ steps.check_pr.outputs.message }}' \
+            -t 'Update ER depending on ${{ github.head_ref }}' \
             -b 'ER updated!' \
             -a ${{ github.actor }} \
             -H $ER_BRANCH
