@@ -1,8 +1,11 @@
 name: learn-github-actions
 run-name: ${{ github.actor }} is learning GitHub Actions
-on: [push]
+on:
+  pull_request:
+    paths:
+      - 'tmp.txt'
 jobs:
-  install-mermerd:
+  update-er:
     permissions:
       actions: write
       checks: write
@@ -23,25 +26,26 @@ jobs:
           url=$(gh api /repos/KarnerTh/mermerd/releases -q '[.[] | select(.prerelease | not) | .assets[] | select(.name | contains("linux_amd64")) | .browser_download_url][0]')
           curl -fsSL "$url" | tar -zxf - mermerd
           chmod a+x ./mermerd
-          ./mermerd --help
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Commit
         run: |
-          gh --version
-          echo 'XXXXX' > ./tmp.txt
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git switch -c chore/update-er
+          git fetch origin
+          ER_BRANCH=chore/update-er-from-${{ github.head_ref }}
+          # コンフリクトを解消できないのでremoteから削除
+          git branch -a | grep -q $ER_BRANCH && git push origin --delete $ER_BRANCH
+          git switch -c $ER_BRANCH
+          echo 'XXXXX' >> ./tmp.txt
           git add tmp.txt
-          git status
           git commit -m "Add tmp.txt"
-          git push -u https://x-access-token:${GITHUB_TOKEN}@github.com/ym19851201/actions_test chore/update-er
+          git push -u https://x-access-token:${GITHUB_TOKEN}@github.com/ym19851201/actions_test 
           gh pr create \
-            -B tmp/test-actions \
+            -B ${{ github.head_ref }} \
             -t 'update ER ${{ steps.check_pr.outputs.message }}' \
             -b 'ER updated!' \
-            -a ${{ github.actor }}
+            -a ${{ github.actor }} \
+            -H $ER_BRANCH
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
