@@ -32,6 +32,7 @@ jobs:
           git fetch origin
           ER_BRANCH=chore/update-er-from-${{ github.ref_name }}
           git switch $ER_BRANCH 2>/dev/null || git switch -c $ER_BRANCH
+          git log
           git pull origin ${{ github.ref_name }}
           echo 'XXXXX' >> ./tmp.txt
           git add tmp.txt
