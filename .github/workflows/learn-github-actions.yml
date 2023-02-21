@@ -33,7 +33,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git fetch origin
-          ER_BRANCH=chore/update-er-from-${{ github.ref_name }}
+          ER_BRANCH=chore/update-er-from-${{ github.head_ref }}
           # コンフリクトを解消できないのでremoteから削除
           git branch -a | grep -q $ER_BRANCH && git push origin --delete $ER_BRANCH
           git switch -c $ER_BRANCH
