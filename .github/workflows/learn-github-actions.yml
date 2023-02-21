@@ -33,12 +33,13 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git fetch origin
+      - name: Set environment variable
+        run: echo 'ER_BRANCH=chore/update-er-from-${{ github.head_ref }}' >> $GITHUB_ENV
       - name: Commit & Push
         run: |
-          ER_BRANCH=chore/update-er-from-${{ github.head_ref }}
           # コンフリクトを解消できないのでremoteから削除
-          git branch -a | grep -q $ER_BRANCH && git push origin --delete $ER_BRANCH
-          git switch -c $ER_BRANCH
+          git branch -a | grep -q ${{ env.ER_BRANCH }} && git push origin --delete ${{ env.ER_BRANCH }}
+          git switch -c ${{ env.ER_BRANCH }}
           echo 'XXXXX' >> ./tmp.txt
           git add tmp.txt
           git commit -m "Add tmp.txt"
@@ -52,6 +53,6 @@ jobs:
             -t 'Update ER depending on ${{ github.head_ref }}' \
             -b 'ER updated!' \
             -a ${{ github.actor }} \
-            -H $ER_BRANCH
+            -H ${{ env.ER_BRANCH }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
